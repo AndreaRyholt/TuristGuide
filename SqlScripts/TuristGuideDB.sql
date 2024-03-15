@@ -7,7 +7,7 @@ CREATE TABLE attractions (
     city varchar(20) NOT NULL DEFAULT ' ');
 
 CREATE TABLE attraction_tag (
-	attactions_id int ,
+	attractions_id int ,
     tag_id int);
     
 CREATE TABLE tags (
