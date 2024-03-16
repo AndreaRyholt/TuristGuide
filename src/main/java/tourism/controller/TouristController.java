@@ -34,7 +34,7 @@ public class TouristController {
         TouristAttraction attraction = service.findUrlName(name);
 
         model.addAttribute("attraction", attraction);
-        return "attraction.html";
+        return "attraction";
     }
 
     @GetMapping("/{name}/tags")
