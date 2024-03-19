@@ -13,28 +13,19 @@ import java.util.List;
 @Repository
 public class TouristRepository {
 
-    //ved ikke om det er rigtigt det her
-    @Value("${spring.datasource.url}")
-    private String db_url;
-
-    @Value("${spring.datasource.username}")
-    private String username;
-
-    @Value("${spring.datasource.password")
-    private String pw;
-    //private final ArrayList<TouristAttraction> attractionsList = new ArrayList<>();
-    //private final List<String> cityList = List.of("København", "Odense", "Århus", "Aalborg", "Randers");
+    private final ArrayList<TouristAttraction> attractionsList = new ArrayList<>();
+    private final List<String> cityList = List.of("København", "Odense", "Århus", "Aalborg", "Randers");
 
 
 
 
-   /* public TouristRepository() {
+   public TouristRepository() {
         attractionsList.add(new TouristAttraction("Tivoli", "Stor forlystelsespark i midten af København.","København", List.of(Tags.FORLYSTELSESPARK, Tags.UDENDØRS, Tags.BØRN)));
         attractionsList.add(new TouristAttraction("Den Lille Havfrue", "En havfrue på en sten, fra H. C. Andersens kendte eventyr 'Den lille Havfrue'.", "København", List.of(Tags.UDENDØRS, Tags.KUNST)));
         attractionsList.add(new TouristAttraction("Djurs Sommerland", "Forlystelsespark for børn.", "Nimtofte", List.of(Tags.UDENDØRS, Tags.FORLYSTELSESPARK,Tags.BØRN)));
         attractionsList.add(new TouristAttraction("Glyptoteket", "Kunstmuseum i København.","København", List.of(Tags.KUNST,Tags.MUSEUM,Tags.INDENDØRS)));
         attractionsList.add(new TouristAttraction("Bakken", "Danmarks ældste forlystelsespark.","Klampenborg", List.of(Tags.UDENDØRS,Tags.PARK,Tags.FORLYSTELSESPARK)));
-    }*/
+    }
 
     public TouristAttraction findName(String name){
         for (TouristAttraction touristAttraction : attractionsList){
@@ -99,4 +90,5 @@ public class TouristRepository {
     public List<String> getCityList(){
         return cityList;
     }
+
 }
