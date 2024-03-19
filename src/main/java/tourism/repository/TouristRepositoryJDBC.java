@@ -7,6 +7,7 @@ import tourism.model.TouristAttraction;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static tourism.manager.ConnectionManager.getConnection;
@@ -39,8 +40,9 @@ public class TouristRepositoryJDBC {
                 String city = rs.getString("city");
                 PreparedStatement preparedStatement = con.prepareStatement(SQL2);
                 preparedStatement.setInt(1, id);
-                ResultSet resultSet = preparedStatement.executeQuery();
-                List<Tags> tags = (List<Tags>) resultSet; //TODO LAV METODE SOM LAVER DET OM TIL ENUM
+                ResultSet resultSet = preparedStatement.executeQuery(); //undersøg evt. om det kan lavet udfra en sql query i stedet for to
+                resultSet.next();
+                List<Tags> tags = Collections.singletonList(getTagFromTagName(resultSet.getString("TAG_NAME"))); //TODO GØR DET TIL ET LOOP
                 attractions.add(new TouristAttraction(name, description, city, tags));
             }
             return attractions;
@@ -75,5 +77,42 @@ public class TouristRepositoryJDBC {
 
     public List<String> getCityList() {
         return null;
+    }
+    public Tags getTagFromTagName(String tagName){ //skal måske være et andet sted eller laves smartere
+        switch (tagName){
+            case "FORLYSTELSESPARK" -> {
+                return Tags.FORLYSTELSESPARK;
+            }
+            case "PARK" -> {
+                return Tags.PARK;
+            }
+            case "SPISESTEDER" -> {
+                return Tags.SPISESTEDER;
+            }
+            case "UDENDØRS" -> {
+                return Tags.UDENDØRS;
+            }
+            case "HC_ANDERSEN" -> {
+                return Tags.HC_ANDERSEN;
+            }
+            case "EVENTYR" -> {
+                return Tags.EVENTYR;
+            }
+            case "BØRN" -> {
+                return Tags.BØRN;
+            }
+            case "KUNST" -> {
+                return Tags.KUNST;
+            }
+            case "MUSEUM" -> {
+                return Tags.MUSEUM;
+            }
+            case "INDENDØRS" -> {
+                return Tags.INDENDØRS;
+            }
+            default -> {
+                return null; //forkert tagName
+            }
+        }
     }
 }
