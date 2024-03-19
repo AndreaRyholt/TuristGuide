@@ -4,6 +4,7 @@ import tourism.model.Tags;
 import tourism.model.TouristAttraction;
 import tourism.repository.TouristRepository;
 import org.springframework.stereotype.Service;
+import tourism.repository.TouristRepositoryJDBC;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,14 +12,16 @@ import java.util.List;
 @Service
 public class TouristService {
 
-    private final TouristRepository repository;
+    private TouristRepositoryJDBC repository;
 
-    public TouristService() {
-        repository = new TouristRepository();
+
+    public TouristService(TouristRepositoryJDBC repository) {
+        this.repository = repository;
+
     }
 
-    public ArrayList<TouristAttraction> getAllAttractions()  {
-        return repository.getAttractionsList();
+    public List<TouristAttraction> getAllAttractions()  {
+        return repository.findAll();
     }
 
     public List<TouristAttraction> getAttractionFromTag(String tag) {
@@ -30,6 +33,8 @@ public class TouristService {
             return null;
         }
     }
+
+
 
     public TouristAttraction addAttraction(TouristAttraction attraction) {
         return  repository.postAttraction(attraction);

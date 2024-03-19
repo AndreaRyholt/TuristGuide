@@ -1,8 +1,11 @@
 package tourism.controller;
 
+import org.apache.catalina.core.ApplicationContext;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
 import tourism.model.Tags;
 import tourism.model.TouristAttraction;
+import tourism.repository.ITouristRepository;
 import tourism.service.TouristService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -14,11 +17,11 @@ import java.util.List;
 @Controller
 @RequestMapping("attractions") //localhost:8080/attractions
 public class TouristController {
-    private final TouristService service;
-
+    private  TouristService service;
     public TouristController(TouristService service){
         this.service = service;
     }
+
 
     /**SHOW ALL ATTRACTIONS**/
     @GetMapping("")
@@ -94,4 +97,5 @@ public class TouristController {
         TouristAttraction deleteAttraction = service.deleteAttraction(name);
         return "delete.html";
     }
+
 }
