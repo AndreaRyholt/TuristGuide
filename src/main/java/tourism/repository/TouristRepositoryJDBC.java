@@ -5,8 +5,10 @@ import org.springframework.stereotype.Repository;
 import tourism.model.Tags;
 import tourism.model.TouristAttraction;
 
+import javax.management.relation.RelationNotification;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,30 +22,36 @@ public class TouristRepositoryJDBC {
     private String db_url = "jdbc:mysql://localhost:3306/turist_guide";
 
 
-    @Value("${spring.datasource.username}")
-    private String  username;
+    //@Value("${spring.datasource.username}")
+    private String  username; //SKRIV USERNAME
 
-    @Value("${spring.datasource.password")
-    private String pw;
+    //@Value("${spring.datasource.password")
+    private String pw; //SKRIV PASSWORD
 
     public List<TouristAttraction> findAll(){
         List<TouristAttraction> attractions = new ArrayList<>();
         try (Connection con = getConnection(db_url, username, pw)) {
-            String SQL = "SELECT * FROM attractions";
-            String SQL2 = "SELECT TAG_NAME FROM ATTRACTION_TAG WHERE ATTRACTIONS_ID = ?";
+            String SQL = "SELECT attractions.*, GROUP_CONCAT(attraction_tag.tag_name) AS tag_names " +
+                    "FROM attractions " +
+                    "LEFT JOIN attraction_tag ON attractions.id = attraction_tag.attractions_id " +
+                    "GROUP BY attractions.id";
+
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(SQL);
+
             while (rs.next()) {
-                int id = rs.getInt("id");
                 String name = rs.getString("name");
                 String description = rs.getString("description");
                 String city = rs.getString("city");
-                PreparedStatement preparedStatement = con.prepareStatement(SQL2);
-                preparedStatement.setInt(1, id);
-                ResultSet resultSet = preparedStatement.executeQuery(); //undersøg evt. om det kan lavet udfra en sql query i stedet for to
-                resultSet.next();
-                List<Tags> tags = Collections.singletonList(getTagFromTagName(resultSet.getString("TAG_NAME"))); //TODO GØR DET TIL ET LOOP
-                attractions.add(new TouristAttraction(name, description, city, tags));
+                String tagNames = rs.getString("tag_names");
+                String[] tags = tagNames.split(",");
+                List<Tags> tag_enums = new ArrayList<>();
+
+                for (String tag : tags){
+                    tag_enums.add(getTagFromTagName(tag));
+                }
+
+                attractions.add(new TouristAttraction(name, description, city, tag_enums));
             }
             return attractions;
         } catch (SQLException e) {
@@ -51,8 +59,26 @@ public class TouristRepositoryJDBC {
         }
     }
 
+
     public List<TouristAttraction> getAttractionFromTag(Tags enumTag) {
-        return null;
+        List<TouristAttraction> attractions = new ArrayList<>();
+        String enum_name = enumTag.getDisplayValue();
+        try (Connection con = getConnection(db_url, username, pw)){
+            String SQL = "SELECT * FROM attractions INNER JOIN attraction_tag ON attractions.id = attraction_tag.attractions_id WHERE attraction_tag.tag_name = ?";
+            PreparedStatement preparedStatement = con.prepareStatement(SQL);
+            preparedStatement.setString(1, enum_name);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()){
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                String description = resultSet.getString("description");
+                String city = resultSet.getString("city");
+                attractions.add(new TouristAttraction(name, description, city, getTagsFromID(id)));
+            }
+            return attractions;
+        }catch (SQLException e){
+            throw new RuntimeException(e);
+        }
     }
 
     public TouristAttraction postAttraction(TouristAttraction attraction) {
@@ -113,6 +139,21 @@ public class TouristRepositoryJDBC {
             default -> {
                 return null; //forkert tagName
             }
+        }
+    }
+    public List<Tags> getTagsFromID(int id){ //den her kan ikke bruges
+        List<Tags> tags = new ArrayList<>();
+        try (Connection con = getConnection(db_url,username,pw)){
+            String SQL = "SELECT tag_name FROM ATTRACTION_TAG WHERE attractions_id = ?";
+            PreparedStatement preparedStatement = con.prepareStatement(SQL);
+            preparedStatement.setInt(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()){
+                tags.add(getTagFromTagName(resultSet.getString("tag_name")));
+            }
+            return tags;
+        }catch (SQLException e){
+            throw new RuntimeException(e);
         }
     }
 }
