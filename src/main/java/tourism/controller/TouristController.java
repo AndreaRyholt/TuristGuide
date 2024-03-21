@@ -42,12 +42,12 @@ public class TouristController {
 
     @GetMapping("/{name}/tags")
     public String getTags(Model model, @PathVariable String name){
-        TouristAttraction attraction = service.findUrlName(name);
+        TouristAttraction attraction = service.getAttractionFromName(name);
         List<Tags> attractionTags = attraction.getTags();
         model.addAttribute("tags", attractionTags);
 
-        // service.getAttractionFromTag(tag);
-        return "tags.html";
+        //service.getAttractionFromTag(tag);
+        return "tags";
     }
 
     @GetMapping(path = "/create")

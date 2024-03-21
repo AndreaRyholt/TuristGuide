@@ -1,15 +1,11 @@
 package tourism.repository;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import tourism.model.Tags;
 import tourism.model.TouristAttraction;
 
-import javax.management.relation.RelationNotification;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static tourism.manager.ConnectionManager.getConnection;
@@ -73,7 +69,8 @@ public class TouristRepositoryJDBC {
                 String name = resultSet.getString("name");
                 String description = resultSet.getString("description");
                 String city = resultSet.getString("city");
-                attractions.add(new TouristAttraction(name, description, city, getTagsFromID(id)));
+                attractions.add(new TouristAttraction(name, description, city, getTagsFromID(id))); //DET HER VIRKER IKKE
+                // TODO BRUG GROUP_CONCAT LIGESOM I findAll OG findName...
             }
             return attractions;
         }catch (SQLException e){
@@ -93,10 +90,36 @@ public class TouristRepositoryJDBC {
         return null;
     }
 
-    public TouristAttraction findName(String name) {
+    public TouristAttraction getAttractionFromName(String name) {
+        try (Connection con = getConnection(db_url, username, pw)){
+            String SQL = "SELECT attractions.*, GROUP_CONCAT(attraction_tag.tag_name) AS tag_names FROM attractions LEFT JOIN attraction_tag ON attractions.id = attraction_tag.attractions_id WHERE name = ? GROUP BY attractions.id";
+            PreparedStatement preparedStatement = con.prepareStatement(SQL);
+            preparedStatement.setString(1, name);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()){
+                String attrationName = resultSet.getString("name");
+                String description = resultSet.getString("description");
+                String city = resultSet.getString("city");
+                List<Tags> enum_tags = getTagListFromString(resultSet,"tag_names");
+                return new TouristAttraction(attrationName,description,city, enum_tags);
+            }
+        }catch (SQLException e){
+            throw new RuntimeException(e);
+        }
         return null;
     }
-
+    private List<Tags> getTagListFromString(ResultSet resultSet, String columLabel){
+        List<Tags> tagsList = new ArrayList<>();
+        try {
+            String[] tagArray = resultSet.getString(columLabel).split(",");
+            for (String tag : tagArray){
+                tagsList.add(getTagFromTagName(tag));
+            }
+        }catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+        return tagsList;
+    }
     public TouristAttraction findUrlName(String urlName) {
         return null;
     }

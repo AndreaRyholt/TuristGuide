@@ -2,11 +2,9 @@ package tourism.service;
 
 import tourism.model.Tags;
 import tourism.model.TouristAttraction;
-import tourism.repository.TouristRepository;
 import org.springframework.stereotype.Service;
 import tourism.repository.TouristRepositoryJDBC;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -48,8 +46,8 @@ public class TouristService {
         return repository.deleteAttraction(name);
     }
 
-    public TouristAttraction findName(String name){
-        return repository.findName(name);
+    public TouristAttraction getAttractionFromName(String name){
+        return repository.getAttractionFromName(name);
     }
     public TouristAttraction findUrlName(String urlName){
         return repository.findUrlName(urlName);
