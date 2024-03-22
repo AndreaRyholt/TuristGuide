@@ -28,7 +28,7 @@ public class TouristController {
     public String allAttractions(Model model){
         List<TouristAttraction> attractionList = service.getAllAttractions();
         model.addAttribute("attractions", attractionList);
-        return "attractions.html";
+        return "attractions";
     }
 
     /** SHOW ATTRACTION NAME AND DESCRIPTION**/
@@ -42,11 +42,10 @@ public class TouristController {
 
     @GetMapping("/{name}/tags")
     public String getTags(Model model, @PathVariable String name){
-        TouristAttraction attraction = service.getAttractionFromName(name);
+        String nameWithSpace = name.replace('-', ' '); //burde måske være metode
+        TouristAttraction attraction = service.getAttractionFromName(nameWithSpace);
         List<Tags> attractionTags = attraction.getTags();
         model.addAttribute("tags", attractionTags);
-
-        //service.getAttractionFromTag(tag);
         return "tags";
     }
 
