@@ -21,17 +21,18 @@ public class TouristRepositoryJDBC {
 
 
     //@Value("${spring.datasource.username}")
-    private final String username =
+    private String username="root"; //SKRIV USERNAME
 
     //@Value("${spring.datasource.password")
-    private final String pw =
+    private String pw="-mads18B"; //SKRIV PASSWORD
 
     public List<TouristAttraction> findAll() {
         List<TouristAttraction> attractions = new ArrayList<>();
-        try (Connection con = ConnectionManager.getConnection(db_url, username, pw)) {
+        try (Connection con = DriverManager.getConnection(db_url, username, pw)) {
             String SQL = "SELECT attractions.*, GROUP_CONCAT(attraction_tag.tag_name) AS tag_names " +
                     "FROM attractions " +
-                    "JOIN attraction_tag ON attractions.id = attraction_tag.attractions_id " +
+                    "JOIN attraction_tag " +
+                    "ON attractions.id = attraction_tag.attractions_id " +
                     "GROUP BY attractions.id";
 
             Statement stmt = con.createStatement();
@@ -61,7 +62,7 @@ public class TouristRepositoryJDBC {
     public List<TouristAttraction> getAttractionFromTag(Tags enumTag) {
         List<TouristAttraction> attractions = new ArrayList<>();
         String enum_name = enumTag.getDisplayValue();
-        try (Connection con = ConnectionManager.getConnection(db_url, username, pw)) {
+        try (Connection con = DriverManager.getConnection(db_url, username, pw)) {
             String SQL = "SELECT * FROM attractions INNER JOIN attraction_tag ON attractions.id = attraction_tag.attractions_id WHERE attraction_tag.tag_name = ?";
             PreparedStatement preparedStatement = con.prepareStatement(SQL);
             preparedStatement.setString(1, enum_name);
@@ -93,8 +94,13 @@ public class TouristRepositoryJDBC {
     }
 
     public TouristAttraction getAttractionFromName(String name) {
-        try (Connection con = ConnectionManager.getConnection(db_url, username, pw)) {
-            String SQL = "SELECT attractions.*, GROUP_CONCAT(attraction_tag.tag_name) AS tag_names FROM attractions JOIN attraction_tag ON attractions.id = attraction_tag.attractions_id WHERE name = ? GROUP BY attractions.id";
+        try (Connection con = DriverManager.getConnection(db_url, username, pw)) {
+            String SQL = "SELECT attractions.*, GROUP_CONCAT(attraction_tag.tag_name) AS tag_names " +
+                    "FROM attractions " +
+                    "JOIN attraction_tag " +
+                    "ON attractions.id = attraction_tag.attractions_id " +
+                    "WHERE name = ? " +
+                    "GROUP BY attractions.id";
             PreparedStatement preparedStatement = con.prepareStatement(SQL);
             preparedStatement.setString(1, name);
             ResultSet resultSet = preparedStatement.executeQuery();

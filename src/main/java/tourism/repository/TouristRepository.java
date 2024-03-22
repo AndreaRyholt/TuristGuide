@@ -17,8 +17,6 @@ public class TouristRepository {
     private final List<String> cityList = List.of("København", "Odense", "Århus", "Aalborg", "Randers");
 
 
-
-
    public TouristRepository() {
         attractionsList.add(new TouristAttraction("Tivoli", "Stor forlystelsespark i midten af København.","København", List.of(Tags.FORLYSTELSESPARK, Tags.UDENDØRS, Tags.BØRN)));
         attractionsList.add(new TouristAttraction("Den Lille Havfrue", "En havfrue på en sten, fra H. C. Andersens kendte eventyr 'Den lille Havfrue'.", "København", List.of(Tags.UDENDØRS, Tags.KUNST)));
@@ -27,7 +25,7 @@ public class TouristRepository {
         attractionsList.add(new TouristAttraction("Bakken", "Danmarks ældste forlystelsespark.","Klampenborg", List.of(Tags.UDENDØRS,Tags.PARK,Tags.FORLYSTELSESPARK)));
     }
 
-    public TouristAttraction findName(String name){
+    /*public TouristAttraction findName(String name){
         for (TouristAttraction touristAttraction : attractionsList){
             if (touristAttraction.getName().contains(name)){
                 return touristAttraction;
@@ -89,6 +87,6 @@ public class TouristRepository {
     }
     public List<String> getCityList(){
         return cityList;
-    }
+    }*/
 
 }

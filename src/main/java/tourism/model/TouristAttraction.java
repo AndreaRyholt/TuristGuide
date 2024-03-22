@@ -27,7 +27,7 @@ public class TouristAttraction {
     public String getUrlName(){
         return urlName;
     }
-    public String getDescription(){ //den bliver brugt
+    public String getDescription(){
         return description;
     }
 

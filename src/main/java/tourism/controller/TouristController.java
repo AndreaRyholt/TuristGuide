@@ -3,6 +3,7 @@ package tourism.controller;
 import org.apache.catalina.core.ApplicationContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
+import tourism.manager.ConnectionManager;
 import tourism.model.Tags;
 import tourism.model.TouristAttraction;
 import tourism.repository.ITouristRepository;
@@ -35,7 +36,6 @@ public class TouristController {
     @GetMapping(path = "/{name}")
     public String getSpecificAttraction(Model model, @PathVariable String name) {
         TouristAttraction attraction = service.findUrlName(name);
-
         model.addAttribute("attraction", attraction);
         return "attraction";
     }
@@ -80,16 +80,6 @@ public class TouristController {
         service.updateAttraction(attraction);
         return "redirect:/attractions";
     }
-
-    /*@PostMapping(path = "/update")
-    public String updateAttraction(TouristAttraction attraction) {
-        TouristAttraction updateAttraction = service.updateAttraction(attraction);
-        if (updateAttraction!=null)
-            return "redirect:/attractions";
-        else {
-            return null;
-        }
-    }*/
 
     @DeleteMapping("/{name}/delete")
     public String deleteAttraction(@RequestBody String name) {
